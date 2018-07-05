@@ -2,69 +2,70 @@ from bs4 import BeautifulSoup
 import urllib
 import pandas as pd
 
-pages = 18
+pages = 2
 rec_count = 0
-rank = []
-gname = []
-platform = []
-year = []
-genre = []
-publisher = []
-sales_na = []
-sales_eu = []
-sales_jp = []
-sales_ot = []
-sales_gl = []
+
+ranks=[]
+photos=[]
+names=[]
+consoles=[]
+publishers=[]
+VGChartz_scores=[]
+critic_scores=[]
+user_scores=[]
+total_sales=[]
+release_dates=[]
+last_updates=[]
 
 urlhead = 'http://www.vgchartz.com/gamedb/?page='
-urltail = '&results=1000&name=&platform=&minSales=0.01&publisher=&genre=&sort=GL'
+urltail = '&results=100&name=&platform=&minSales=0.01&publisher=&genre=&sort=GL'
 
 for page in range(1,pages):
 	surl = urlhead + str(page) + urltail	
 	r = urllib.urlopen(surl).read()
 	soup = BeautifulSoup(r)
 	print page
-	chart = soup.find("table", class_="chart")
-	for row in chart.find_all('tr')[1:]:
+	chart = soup.find("table")
+	for row in chart.find_all('tr')[25:]:
 		try: 
 			col = row.find_all('td')
 		
 			#extract data into column data
-			column_1 = col[0].string.strip()
-			column_2 = col[1].string.strip()		
-			column_3 = col[2].string.strip()		
-			column_4 = col[3].string.strip()		
-			column_5 = col[4].string.strip()	
-			column_6 = col[5].string.strip()
-			column_7 = col[6].string.strip()		
-			column_8 = col[7].string.strip()		
-			column_9 = col[8].string.strip()		
-			column_10 = col[9].string.strip()		
-			column_11 = col[10].string.strip()
+			rank 					= col[0].string.strip()
+			photo 					= col[1].string
+			name 					= col[2].find_all('a')[0].string
+			console 				= col[3].string
+			publisher 				= col[4].string
+			VGChartz_score 			= col[5].string
+			critic_score 			= col[6].string
+			user_score 				= col[7].string
+			total_sale 				= col[8].string
+			release_date 			= col[9].string
+			last_update 			= col[10].string
 
 			#Add Data to columns
 			#Adding data only if able to read all of the columns
-			rank.append(column_1)
-			gname.append(column_2)
-			platform.append(column_3)
-			year.append(column_4)
-			genre.append(column_5)
-			publisher.append(column_6)
-			sales_na.append(column_7)
-			sales_eu.append(column_8)
-			sales_jp.append(column_9)
-			sales_ot.append(column_10)
-			sales_gl.append(column_11)
-		
+			ranks.append(rank)
+			photos.append(photo)
+			names.append(name)
+			consoles.append(console)
+			publishers.append(publisher)
+			VGChartz_scores.append(VGChartz_score)
+			critic_scores.append(critic_score)
+			user_scores.append(user_score)
+			total_sales.append(total_sale)
+			release_dates.append(release_date)
+			last_updates.append(last_update)
+
 			rec_count += 1
 	
 		except:
 			continue
 
-columns = {'rank': rank, 'name': gname, 'platform': platform, 'year': year, 'genre': genre, 'publisher': publisher, 'NA_Sales':sales_na, 'EU_Sales': sales_eu,'JP_Sales': sales_jp,'Other_Sales':sales_ot, 'Global_Sales':sales_gl }
+columns = {'rank': ranks, 'name':names, 'consoles':consoles, 'publishers':publishers, 'VGChartz_scores':VGChartz_scores, 'critic_scores':critic_scores, 'user_scores':user_scores, 'total_sales':total_sales, 'release_dates':release_dates, 'last_updates':last_updates}
 print rec_count
 df = pd.DataFrame(columns)
-df = df[['Rank','Name','Platform','Year','Genre','Publisher','NA_Sales','EU_Sales','JP_Sales','Other_Sales','Global_Sales']]
+df = df[['rank','name','consoles','publishers','VGChartz_scores','critic_scores','user_scores','total_sales','release_dates','last_updates']]
 del df.index.name
 df.to_csv("vgsales.csv",sep=",",encoding='utf-8')
 
