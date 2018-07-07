@@ -22,7 +22,7 @@ other_sales=[]
 release_dates=[]
 last_updates=[]
 
-result_size = 1000
+result_size = 100
 url = 'http://www.vgchartz.com/gamedb/games.php?name=&keyword=&console=&region=All&developer=&publisher=&goty_year=&genre=&boxart=Both&banner=Both&ownership=Both&results='+str(result_size)+'&order=Sales&showtotalsales=0&showtotalsales=1&showpublisher=0&showpublisher=1&showvgchartzscore=0&showvgchartzscore=1&shownasales=0&shownasales=1&showdeveloper=0&showdeveloper=1&showcriticscore=0&showcriticscore=1&showpalsales=0&showpalsales=1&showreleasedate=0&showreleasedate=1&showuserscore=0&showuserscore=1&showjapansales=0&showjapansales=1&showlastupdate=0&showlastupdate=1&showothersales=0&showothersales=1'
 
 # for page in range(1,pages):
@@ -39,7 +39,7 @@ for row in chart.find_all('tr')[25:]:
 		rank 					= col[0].string.strip()
 		photo 					= col[1].string
 		name 					= col[2].find_all('a')[0].string
-		console 				= col[3].string
+		console 				= col[3].find_all('img')[0].attrs['alt']
 		publisher 				= col[4].string
 		developer	 			= col[5].string
 		VGChartz_score 			= col[6].string
